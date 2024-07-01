@@ -1,8 +1,11 @@
 #pragma once
 
+#include <chrono>
 #include <string>
 #include <memory>
 #include <fstream>
+#include <sstream>
+#include <iomanip>
 
 class Logger
 {
@@ -20,7 +23,7 @@ public:
 
     static std::shared_ptr<Logger> getLogger();
 
-    void log(const std::string&) const;
+    void log(const std::string&);
 
 private:
 
