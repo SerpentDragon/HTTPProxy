@@ -11,7 +11,9 @@ file(COPY src DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(proxy ${SOURCE_FILE})
 
-# target_link_libraries(proxy PRIVATE Boost::system Boost::thread Boost::program_options)
+find_package(Boost COMPONENTS system thread program_options url REQUIRED)
+
+target_link_libraries(proxy PRIVATE Boost::system Boost::thread Boost::program_options Boost::url)
 
 set_target_properties(proxy PROPERTIES
     CXX_STANDARD 17
