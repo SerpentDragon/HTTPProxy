@@ -4,7 +4,10 @@ project(Proxy VERSION 1.0.0)
 
 set(SOURCE_FILE
     src/main.cpp
-    src/logger.cpp
+    src/server/http_server.cpp
+    src/server/http_session.cpp
+    src/server/udp_connection.cpp
+    src/logger/logger.cpp
 )
 
 file(COPY src DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
