@@ -14,7 +14,7 @@ void http_server::start_accept()
     {
         if (!ec) 
         {
-            std::make_shared<http_session>(std::move(socket))->start();
+            std::make_shared<http_session>(io_, std::move(socket))->start();
         }
         else
         {
