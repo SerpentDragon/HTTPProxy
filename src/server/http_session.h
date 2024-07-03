@@ -6,6 +6,7 @@
 #include <boost/beast.hpp>
 #include <boost/url/url_view.hpp>
 
+namespace asio = boost::asio;
 namespace beast = boost::beast;
 namespace http = beast::http;
 namespace urls = boost::urls;
@@ -15,7 +16,7 @@ class http_session : public std::enable_shared_from_this<http_session>
 {
 public:
 
-    http_session(tcp::socket);
+    http_session(asio::io_service&, tcp::socket);
 
     void start();
 
@@ -25,10 +26,11 @@ private:
 
     void handle_request();
 
-    std::optional<std::pair<std::string, int>> handle_request(const std::string&);
+    std::optional<std::pair<std::string, std::string>> handle_request(const std::string&) const;
 
 private:
 
+    asio::io_service& io_;
     tcp::socket socket_;
     beast::flat_buffer buffer_;
     http::request<http::string_body> request_;

@@ -1,6 +1,7 @@
 #include "http_session.h"
 
-http_session::http_session(tcp::socket socket) : socket_(std::move(socket)) {}
+http_session::http_session(asio::io_service& io, tcp::socket socket) : 
+    io_(io), socket_(std::move(socket)) {}
 
 void http_session::start()
 {
@@ -44,7 +45,7 @@ void http_session::handle_request()
     }
 }
 
-std::optional<std::pair<std::string, int>> http_session::handle_request(const std::string& target) 
+std::optional<std::pair<std::string, std::string>> http_session::handle_request(const std::string& target) const
 {
     urls::url_view uri(target);
 
@@ -61,7 +62,7 @@ std::optional<std::pair<std::string, int>> http_session::handle_request(const st
 
             auto value = result.value();
 
-            return { { value.host(), std::stoi(value.port()) } };
+            return { { value.host(), value.port() } };
         }
     }
     
