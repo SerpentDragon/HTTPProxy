@@ -37,5 +37,4 @@ private:
     asio::io_service& io_;
     tcp::socket socket_;
     std::vector<uint8_t> buffer_;
-    http::request<http::string_body> request_;
 };
