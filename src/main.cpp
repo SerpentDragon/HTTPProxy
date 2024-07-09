@@ -5,7 +5,7 @@ int main(int argc, char** argv)
 {
     if (argc != 3)
     {
-        std::cout << "Usage: " << argv[0] << " <host> <port>\n";
+        std::cerr << "Usage: " << argv[0] << " <host> <port>\n";
         return EXIT_FAILURE;
     }
 
