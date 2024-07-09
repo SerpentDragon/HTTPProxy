@@ -1,7 +1,7 @@
 #include "udp_connection.h"
 
 udp_connection::udp_connection(asio::io_service& io, const std::string& host, int port)
-    : io_(io), output_dir_(host + ":" + std::to_string(port)),
+    : io_(io), output_dir_(host + "_" + std::to_string(port)),
     socket_(io, udp::endpoint(asio::ip::address::from_string(host), port)),
     ffmpeg_(output_dir_) {}
 

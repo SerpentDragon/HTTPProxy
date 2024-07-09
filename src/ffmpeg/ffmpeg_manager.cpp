@@ -175,7 +175,7 @@ bool ffmpeg_manager::open_output_file(const std::string& output_filename)
     {
         if (avio_open(&output_ctx_->pb, output_filename.c_str(), AVIO_FLAG_WRITE) < 0) 
         {
-            Logger::get_logger()->log("Could not open output file for " + output_dir_ + "\n");
+            Logger::get_logger()->log("Could not open output file " + output_filename + " for " + output_dir_ + "\n");
             return false;
         }
     }
