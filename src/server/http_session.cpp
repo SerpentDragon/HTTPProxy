@@ -18,12 +18,16 @@ void http_session::read_request()
     auto this_session = shared_from_this();
 
     http::async_read(socket_, buffer_, request_, 
-        [this, this_session](beast::error_code ec, std::size_t bytes)
+        [this, this_session](boost::system::error_code ec, std::size_t bytes)
         {
-            if (!ec) handle_request();
+            if (!ec)
+            {
+                Logger::get_logger()->log("Got the request " + std::string(request_.target()) + "\n");
+                handle_request();
+            }
             else
             {
-                // logging
+                Logger::get_logger()->log("Error reading address of the stream!\n");
             }
         });
 }
@@ -32,6 +36,7 @@ void http_session::handle_request()
 {
     if (request_.method() != http::verb::get)
     {
+        Logger::get_logger()->log("Request has no GET method!\n");
         return;
     }
     
@@ -43,11 +48,13 @@ void http_session::handle_request()
     {
         auto [host, port] = connection_data.value();
 
+        Logger::get_logger()->log("Connecting to the stream: udp://" + host + ":" + port + "\n");
+
         std::make_shared<udp_connection>(io_, host, std::stoi(port))->start();
     }
     else
     {
-        // logging
+        Logger::get_logger()->log("Error extracting data to connect to the stream!\n");
     }
 }
 

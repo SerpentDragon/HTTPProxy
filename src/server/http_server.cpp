@@ -10,15 +10,16 @@ void http_server::run()
 
 void http_server::start_accept()
 {
-    acceptor_.async_accept([this](beast::error_code ec, tcp::socket socket)
+    acceptor_.async_accept([this](boost::system::error_code ec, tcp::socket socket)
     {
         if (!ec)
         {
+            Logger::get_logger()->log("New client has connected to the server! Opening http session...\n");
             std::make_shared<http_session>(io_, std::move(socket))->start();
         }
         else
         {
-            // logging
+            Logger::get_logger()->log("Error accepting client: " + ec.message() + "\n");
         }
 
         start_accept();

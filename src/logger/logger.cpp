@@ -12,7 +12,7 @@ Logger::~Logger()
     log_file_.close();
 }
 
-std::shared_ptr<Logger> Logger::getLogger()
+std::shared_ptr<Logger> Logger::get_logger()
 {
     if (logger_ == nullptr) logger_ = std::shared_ptr<Logger>(new Logger());
 

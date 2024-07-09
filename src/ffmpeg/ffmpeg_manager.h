@@ -6,6 +6,7 @@
 #include <string>
 #include <iostream>
 #include <boost/asio.hpp>
+#include "../logger/logger.h"
 
 extern "C"
 {

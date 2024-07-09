@@ -34,14 +34,14 @@ bool ffmpeg_manager::init_input_ctx(udp::socket& socket)
     AVIOContext* avio_ctx = avio_alloc_context(buffer_, buffer_size_, 0, &socket, read_data, nullptr, nullptr);
     if (!avio_ctx)
     {
-        std::cerr << "Error create avio context!\n";
+        Logger::get_logger()->log("Error create avio context for " + output_dir_ + "!\n");
         return false;
     }
 
     input_ctx_ = avformat_alloc_context();
     if (!input_ctx_)
     {
-        std::cerr << "Error create input context!\n";
+        Logger::get_logger()->log("Error creating input context for " + output_dir_ + "!\n");
         avio_context_free(&avio_ctx);
         return false;
     }
@@ -50,16 +50,18 @@ bool ffmpeg_manager::init_input_ctx(udp::socket& socket)
 
     if (avformat_open_input(&input_ctx_, nullptr, nullptr, nullptr) < 0)
     {
-        std::cerr << "Could not open input context" << std::endl;
+        Logger::get_logger()->log("Error opening input context for " + output_dir_ + "!\n");
         return false;
     }
 
     if (avformat_find_stream_info(input_ctx_, nullptr) < 0)
     {
-        std::cerr << "Could not find stream information" << std::endl;
+        Logger::get_logger()->log("Error finding stream info for " + output_dir_ + "!\n");
         avformat_close_input(&input_ctx_);
         return false;
     }
+
+    Logger::get_logger()->log("Created input context for " + output_dir_ + "\n");
 
     return true;
 }
@@ -74,6 +76,7 @@ void ffmpeg_manager::write_data()
 
     if (!open_output_file(output_filename)) 
     {
+        Logger::get_logger()->log("Error opening first output file for " + output_dir_ + "\n");
         avformat_close_input(&input_ctx_);
         return;
     }
@@ -94,6 +97,7 @@ void ffmpeg_manager::write_data()
             output_filename = output_dir_ + generate_filename();
             if (!open_output_file(output_filename)) 
             {
+                Logger::get_logger()->log("Error opening output file for " + output_dir_ + "\n");
                 avformat_close_input(&input_ctx_);
                 return;
             }
@@ -106,7 +110,7 @@ void ffmpeg_manager::write_data()
 
         if (av_interleaved_write_frame(output_ctx_, &packet) < 0) 
         {
-            std::cerr << "Error muxing packet" << std::endl;
+            Logger::get_logger()->log("Error muxing for " + output_dir_ + "\n");
             break;
         }
 
@@ -138,13 +142,13 @@ bool ffmpeg_manager::open_output_file(const std::string& output_filename)
     const AVOutputFormat* output_format = av_guess_format("mpegts", nullptr, nullptr);
     if (!output_format) 
     {
-        std::cerr << "Could not guess output format" << std::endl;
+        Logger::get_logger()->log("Could not guess output format for " + output_dir_ + "\n");
         return false;
     }
 
     if (avformat_alloc_output_context2(&output_ctx_, output_format, nullptr, output_filename.c_str()) < 0) 
     {
-        std::cerr << "Could not create output context" << std::endl;
+        Logger::get_logger()->log("Error creating output context for " + output_dir_ + "\n");
         return false;
     }
 
@@ -154,13 +158,13 @@ bool ffmpeg_manager::open_output_file(const std::string& output_filename)
         AVStream* out_stream = avformat_new_stream(output_ctx_, nullptr);
         if (!out_stream) 
         {
-            std::cerr << "Failed to allocate output stream" << std::endl;
+            Logger::get_logger()->log("Failed to allocate output stream for " + output_dir_ + "\n");
             return false;
         }
 
         if (avcodec_parameters_copy(out_stream->codecpar, in_stream->codecpar) < 0) 
         {
-            std::cerr << "Failed to copy codec parameters" << std::endl;
+            Logger::get_logger()->log("Failed to copy codec parameters for " + output_dir_ + "\n");
             return false;
         }
 
@@ -171,16 +175,18 @@ bool ffmpeg_manager::open_output_file(const std::string& output_filename)
     {
         if (avio_open(&output_ctx_->pb, output_filename.c_str(), AVIO_FLAG_WRITE) < 0) 
         {
-            std::cerr << "Could not open output file: " << output_filename << std::endl;
+            Logger::get_logger()->log("Could not open output file for " + output_dir_ + "\n");
             return false;
         }
     }
 
     if (avformat_write_header(output_ctx_, nullptr) < 0) 
     {
-        std::cerr << "Error occurred when writing header to output file" << std::endl;
+        Logger::get_logger()->log("Error writing header to output file for " + output_dir_ + "\n");
         return false;
     }
+
+    Logger::get_logger()->log("Created output file " + output_filename + " for " + output_dir_ + "\n");
 
     return true;
 }

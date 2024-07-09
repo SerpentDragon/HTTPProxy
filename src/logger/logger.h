@@ -21,7 +21,7 @@ public:
 
     ~Logger();
 
-    static std::shared_ptr<Logger> getLogger();
+    static std::shared_ptr<Logger> get_logger();
 
     void log(const std::string&);
 
