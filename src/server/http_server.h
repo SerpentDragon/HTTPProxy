@@ -2,10 +2,8 @@
 
 #include "http_session.h"
 #include <boost/asio.hpp>
-#include <boost/beast.hpp>
 
 namespace asio = boost::asio;
-namespace beast = boost::beast;
 using tcp = asio::ip::tcp;
 
 class http_server
@@ -24,5 +22,4 @@ private:
 
     asio::io_service& io_;
     tcp::acceptor acceptor_;
-    tcp::endpoint endpoint_;
 };

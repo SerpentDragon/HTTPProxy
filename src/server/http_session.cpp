@@ -3,6 +3,11 @@
 http_session::http_session(asio::io_service& io, tcp::socket socket) : 
     io_(io), socket_(std::move(socket)) {}
 
+http_session::~http_session()
+{
+    socket_.close();
+}
+
 void http_session::start()
 {
     read_request();
@@ -18,7 +23,7 @@ void http_session::read_request()
             if (!ec) handle_request();
             else
             {
-
+                // logging
             }
         });
 }
@@ -32,20 +37,21 @@ void http_session::handle_request()
     
     std::string request = request_.target();
 
-    auto connection_data = handle_request(request);
+    auto connection_data = parse_request(request);
 
     if (connection_data.has_value())
     {
         auto [host, port] = connection_data.value();
 
+        std::make_shared<udp_connection>(io_, host, std::stoi(port))->start();
     }
     else
     {
-
+        // logging
     }
 }
 
-std::optional<std::pair<std::string, std::string>> http_session::handle_request(const std::string& target) const
+std::optional<std::pair<std::string, std::string>> http_session::parse_request(const std::string& target) const
 {
     urls::url_view uri(target);
 

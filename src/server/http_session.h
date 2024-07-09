@@ -4,6 +4,7 @@
 #include <boost/url.hpp>
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
+#include "udp_connection.h"
 #include <boost/url/url_view.hpp>
 
 namespace asio = boost::asio;
@@ -18,6 +19,8 @@ public:
 
     http_session(asio::io_service&, tcp::socket);
 
+    ~http_session();
+
     void start();
 
 private:
@@ -26,7 +29,7 @@ private:
 
     void handle_request();
 
-    std::optional<std::pair<std::string, std::string>> handle_request(const std::string&) const;
+    std::optional<std::pair<std::string, std::string>> parse_request(const std::string&) const;
 
 private:
 
