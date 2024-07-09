@@ -2,6 +2,7 @@
 
 #define __STDC_CONSTANT_MACROS
 
+#include <chrono>
 #include <string>
 #include <iostream>
 #include <boost/asio.hpp>
@@ -17,15 +18,16 @@ extern "C"
 namespace asio = boost::asio;
 using udp = asio::ip::udp;
 
-std::string output_dir = ".";
-
 int read_data(void*, uint8_t*, int);
+
+std::string generate_filename();
+
 
 class ffmpeg_manager
 {
 public:
 
-    ffmpeg_manager();
+    ffmpeg_manager(const std::string&);
 
     ffmpeg_manager(const ffmpeg_manager&) = delete;
 
@@ -58,4 +60,6 @@ private:
 
     int buffer_size_;
     uint8_t* buffer_;
+
+    std::string output_dir_;
 };

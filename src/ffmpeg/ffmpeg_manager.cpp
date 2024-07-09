@@ -10,8 +10,16 @@ int read_data(void* opaque, uint8_t* buf, int size)
     return len ? len : -1;
 }
 
-ffmpeg_manager::ffmpeg_manager() : input_ctx_(nullptr), output_ctx_(nullptr), 
-    buffer_size_(65536), buffer_(static_cast<uint8_t*>(av_malloc(buffer_size_)))
+std::string generate_filename()
+{
+    auto now = std::chrono::system_clock::now();
+	return std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count()) + ".ts";
+}
+
+
+ffmpeg_manager::ffmpeg_manager(const std::string& output_dir) 
+    : input_ctx_(nullptr), output_ctx_(nullptr), buffer_size_(65536), 
+    buffer_(static_cast<uint8_t*>(av_malloc(buffer_size_))), output_dir_(output_dir + '/')
 {
     avformat_network_init();
 }
@@ -62,7 +70,7 @@ void ffmpeg_manager::write_data()
     int64_t segment_duration = 60 * AV_TIME_BASE;
     int64_t current_segment_start_time = 0;
 
-    std::string output_filename = output_dir + "/segment_" + std::to_string(segment_index++) + ".ts";
+    std::string output_filename = output_dir_ + generate_filename();
 
     if (!open_output_file(output_filename)) 
     {
@@ -83,7 +91,7 @@ void ffmpeg_manager::write_data()
 
             current_segment_start_time = packet_pts_time;
 
-            output_filename = output_dir + "/segment_" + std::to_string(segment_index++) + ".ts";
+            output_filename = output_dir_ + generate_filename();
             if (!open_output_file(output_filename)) 
             {
                 avformat_close_input(&input_ctx_);
