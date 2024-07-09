@@ -22,6 +22,7 @@ set(HEADERS
 )
 
 add_executable(proxy ${SOURCE_FILE} ${HEADERS})
+add_executable(client src/client/client.cpp)
 
 find_package(Boost COMPONENTS system thread program_options url REQUIRED)
 find_package(PkgConfig REQUIRED)
@@ -31,6 +32,7 @@ pkg_check_modules(AVUTIL libavutil REQUIRED)
 
 target_link_libraries(proxy PRIVATE Boost::system Boost::thread Boost::program_options Boost::url
                             ${AVFORMAT_LIBRARIES} ${AVCODEC_LIBRARIES} ${AVUTIL_LIBRARIES})
+target_link_libraries(client PRIVATE Boost::system Boost::thread Boost::program_options Boost::url)
 
 set_target_properties(proxy PROPERTIES
     CXX_STANDARD 17
