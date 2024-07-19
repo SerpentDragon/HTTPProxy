@@ -15,11 +15,15 @@ private:
 
     Logger(const Logger&) = delete;
 
+    Logger(Logger&&) noexcept = delete;
+
     Logger& operator=(const Logger&) = delete;
 
-public:
+    Logger& operator=(Logger&&) = delete;
 
     ~Logger();
+
+public:
 
     static std::shared_ptr<Logger> get_logger();
 
