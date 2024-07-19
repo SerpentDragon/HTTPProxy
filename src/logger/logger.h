@@ -21,9 +21,9 @@ private:
 
     Logger& operator=(Logger&&) = delete;
 
-    ~Logger();
-
 public:
+
+    ~Logger();
 
     static std::shared_ptr<Logger> get_logger();
 
